@@ -7,8 +7,8 @@ from royModel_op import *
 from numpy.random import *
 from numpy import *
 
-IntervalTask = 4
-IntervalWorker = 3
+IntervalTask = 2
+IntervalWorker = 4
 
 class Arrival(object):
 	arTaskTime = 0
@@ -76,7 +76,11 @@ class CrowdMaint(object):
 			print self.TaskIn.V
 			print "==="
 
-			self.TaskIn = AssignWorker(0, self.TaskIn, InitTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers))
+			TI = InitTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers)
+			TI.V = self.TaskIn.V
+			TI.finWorkers = self.TaskIn.finWorkers
+			TI.finTasks = self.TaskIn.finTasks
+			self.TaskIn = AssignWorker(0, self.TaskIn, TI)
 			
 			print "++++"
 			print self.TaskIn.TAlist

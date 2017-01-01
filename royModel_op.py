@@ -78,119 +78,53 @@ def CopyTI(TI1, TI2): #T1をT2にコピー
 		TI2.TAlist[i].u_t = TI1.TAlist[i].u_t
 
 def AssignWorker(i, TI, OptimalTI):
-	if i == 0:
-		OptimalTI.V = TI.V
-		OptimalTI.finWorkers = TI.finWorkers
-		OptimalTI.finTasks = TI.finTasks
-
 	for j in range( 2 ** len(TI.TAlist[0].u_t) ): #2^nのパターン数
 
 		if see_Xh(TI, Xh, i-1) == False:
-			print u"じぇじぇじぇXh"
-			break
 
-		TI.TAlist[i].u_t = binCon(j, len(TI.TAlist[0].u_t))		
-
+		TI.TAlist[i].u_t = binCon(j, len(TI.TAlist[0].u_t))
+		
 		if (i > 0) and (cul_wage(TI.TAlist[i-1].u_t, TI.Workers) > TI.TAlist[i-1].task.Wage):
-			print u"じぇじぇじぇWage"
-			break
 
 		TI.TAlist[i].v_t = value(TI.TAlist[i].task, TI.TAlist[i].u_t, TI.Workers)
 		
 		if i == ( len(TI.TAlist)-1 ): #最後の列まで行った場合
-			if checkXh(TI, Xh) == True:
-				print "iiiiiiii"
-				print TI.TAlist
-				print TI.Workers
-				print TI.Tasks
-				if TI.TAlist != []:
-					for i in range (len(TI.TAlist)):
-						print "v", TI.TAlist[i].v_t
-					for i in range (len(TI.TAlist)):
-						print "u", TI.TAlist[i].u_t
-				print TI.finWorkers
-				print TI.finTasks
-				print TI.V
-				print "iiiiiiii"
-
-				print "oooooooooo"
-				print OptimalTI.TAlist
-				print OptimalTI.Workers
-				print OptimalTI.Tasks
-				if OptimalTI.TAlist != []:
-					for i in range (len(OptimalTI.TAlist)):
-						print "v", OptimalTI.TAlist[i].v_t
-					for i in range (len(OptimalTI.TAlist)):
-						print "u", OptimalTI.TAlist[i].u_t
-				print OptimalTI.finWorkers
-				print OptimalTI.finTasks
-				print OptimalTI.V
-				print "oooooooooo"
-
-				if TI.cul_V() > OptimalTI.cul_V(): #ここではVに足されない
-					
+			if checkXh(TI, Xh) == True:				
+				if TI.cul_V() > OptimalTI.cul_V() : #ここではVに足されない
 					CopyTI(TI, OptimalTI)
 					OptimalTI.update_sumV() #ここでVに足される
 
-					print "^^^"
-					print TI.TAlist
-					print TI.Workers
-					print TI.Tasks
-					if TI.TAlist != []:
-						for i in range (len(TI.TAlist)):
-							print "v", TI.TAlist[i].v_t
-						for i in range (len(TI.TAlist)):
-							print "u", TI.TAlist[i].u_t
-					print TI.finWorkers
-					print TI.finTasks
-					print TI.V
-					print "^^^"
-
-					print "---"
-					print OptimalTI.TAlist
-					print OptimalTI.Workers
-					print OptimalTI.Tasks
-					if OptimalTI.TAlist != []:
-						for i in range (len(OptimalTI.TAlist)):
-							print "v", OptimalTI.TAlist[i].v_t
-						for i in range (len(OptimalTI.TAlist)):
-							print "u", OptimalTI.TAlist[i].u_t
-					print OptimalTI.finWorkers
-					print OptimalTI.finTasks
-					print OptimalTI.V
-					print "---"
-
 		else:
 			OptimalTI = AssignWorker(i+1, TI, OptimalTI)
-	
-		print "666666"
-		print TI.TAlist
-		print TI.Workers
-		print TI.Tasks
-		if TI.TAlist != []:
-			for i in range (len(TI.TAlist)):
-				print "v", TI.TAlist[i].v_t
-			for i in range (len(TI.TAlist)):
-				print "u", TI.TAlist[i].u_t
-		print TI.finWorkers
-		print TI.finTasks
-		print TI.V
-		print "666666"
+	'''	
+	print "666666"
+	print TI.TAlist
+	print TI.Workers
+	print TI.Tasks
+	if TI.TAlist != []:
+		for i in range (len(TI.TAlist)):
+			print "v", TI.TAlist[i].v_t
+		for i in range (len(TI.TAlist)):
+			print "u", TI.TAlist[i].u_t
+	print TI.finWorkers
+	print TI.finTasks
+	print TI.V
+	print "666666"
 
-		print "333333"
-		print OptimalTI.TAlist
-		print OptimalTI.Workers
-		print OptimalTI.Tasks
-		if OptimalTI.TAlist != []:
-			for i in range (len(OptimalTI.TAlist)):
-				print "v", OptimalTI.TAlist[i].v_t
-			for i in range (len(OptimalTI.TAlist)):
-				print "u", OptimalTI.TAlist[i].u_t
-		print OptimalTI.finWorkers
-		print OptimalTI.finTasks
-		print OptimalTI.V
-		print "3333333"
-
+	print "333333"
+	print OptimalTI.TAlist
+	print OptimalTI.Workers
+	print OptimalTI.Tasks
+	if OptimalTI.TAlist != []:
+		for i in range (len(OptimalTI.TAlist)):
+			print "v", OptimalTI.TAlist[i].v_t
+		for i in range (len(OptimalTI.TAlist)):
+			print "u", OptimalTI.TAlist[i].u_t
+	print OptimalTI.finWorkers
+	print OptimalTI.finTasks
+	print OptimalTI.V
+	print "3333333"
+	'''
 	return OptimalTI
 
 def cul_wage(u_t, Workers):
@@ -207,7 +141,7 @@ def see_Xh(TI, h, k): #k行目まででXhをチェック
 		return True
 
 	for j in range(len(TI.Workers)):
-		flag = TI.Workers[j].X
+		flag = 0
 		for i in range(k):
 			flag += int(TI.TAlist[i].u_t[j])
 		if flag > h:

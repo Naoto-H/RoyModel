@@ -9,7 +9,7 @@ from numpy.random import *
 from numpy import *
 import random
 import time
-seed(1) 
+seed(17) 
 if __name__ == '__main__':
 	start = time.time()
 	
@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	TaskIn = InitTaskIndex([], [])
 	cm = CrowdMaint(Arv, TaskIn)
 
-	for i in range(50):
+	for i in range(15):
 		print "unit %d start" % i
 		cm.arrivalTW()
 		if cm.Arrival.flag > 0:
