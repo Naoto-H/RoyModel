@@ -46,6 +46,12 @@ class TaskIndex(object):
 		return v
 
 	def cul_sumV(self):
+		V = self.V
+		for TA in self.TAlist:
+			V += TA.v_t
+		return V
+
+	def update_sumV(self):
 		for TA in self.TAlist:
 			self.V += TA.v_t
 		return self.V
@@ -71,21 +77,26 @@ def CopyTI(TI1, TI2): #T1をT2にコピー
 		TI2.TAlist[i].v_t = TI1.TAlist[i].v_t
 		TI2.TAlist[i].u_t = TI1.TAlist[i].u_t
 
-def AssignWorker(i, TI, V_M, OptimalTI):
+def AssignWorker(i, TI, OptimalTI):
+	if i == 0:
+		OptimalTI.V = TI.V
+		OptimalTI.finWorkers = TI.finWorkers
+		OptimalTI.finTasks = TI.finTasks
+
 	for j in range( 2 ** len(TI.TAlist[0].u_t) ): #2^nのパターン数
 
-		#if see_Xh(TI, Xh, i-1) == False:
-		#	break
+		if see_Xh(TI, Xh, i-1) == False:
+			print u"じぇじぇじぇXh"
+			break
 
 		TI.TAlist[i].u_t = binCon(j, len(TI.TAlist[0].u_t))		
 
-		#if (cul_wage(TI.TAlist[i].u_t, TI.Workers) > TI.TAlist[i].task.Wage):
-		#	break
+		if (i > 0) and (cul_wage(TI.TAlist[i-1].u_t, TI.Workers) > TI.TAlist[i-1].task.Wage):
+			print u"じぇじぇじぇWage"
+			break
 
 		TI.TAlist[i].v_t = value(TI.TAlist[i].task, TI.TAlist[i].u_t, TI.Workers)
-
 		
-
 		if i == ( len(TI.TAlist)-1 ): #最後の列まで行った場合
 			if checkXh(TI, Xh) == True:
 				print "iiiiiiii"
@@ -116,8 +127,11 @@ def AssignWorker(i, TI, V_M, OptimalTI):
 				print OptimalTI.V
 				print "oooooooooo"
 
-				if TI.cul_V() > OptimalTI.cul_V():
+				if TI.cul_V() > OptimalTI.cul_V(): #ここではVに足されない
+					
 					CopyTI(TI, OptimalTI)
+					OptimalTI.update_sumV() #ここでVに足される
+
 					print "^^^"
 					print TI.TAlist
 					print TI.Workers
@@ -147,7 +161,7 @@ def AssignWorker(i, TI, V_M, OptimalTI):
 					print "---"
 
 		else:
-			OptimalTI = AssignWorker(i+1, TI, V_M, OptimalTI)
+			OptimalTI = AssignWorker(i+1, TI, OptimalTI)
 	
 		print "666666"
 		print TI.TAlist

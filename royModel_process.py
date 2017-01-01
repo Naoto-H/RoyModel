@@ -76,8 +76,7 @@ class CrowdMaint(object):
 			print self.TaskIn.V
 			print "==="
 
-			self.TaskIn = AssignWorker(0, self.TaskIn, self.TaskIn.cul_sumV(), self.TaskIn)
-			self.TaskIn.cul_sumV()
+			self.TaskIn = AssignWorker(0, self.TaskIn, InitTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers))
 			
 			print "++++"
 			print self.TaskIn.TAlist

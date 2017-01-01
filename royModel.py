@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	TaskIn = InitTaskIndex([], [])
 	cm = CrowdMaint(Arv, TaskIn)
 
-	for i in range(12):
+	for i in range(50):
 		print "unit %d start" % i
 		cm.arrivalTW()
 		if cm.Arrival.flag > 0:
