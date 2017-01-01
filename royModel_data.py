@@ -43,12 +43,15 @@ for i in range(100):
 #for i in range(100):
 #	z.append(normal(0.5, 0.2))
 
-U = [Worker(0.6, 0.2, 0.7, 0.8),
-	Worker(0.8, 0.5, 1, 0.6),
-	Worker(0.3, 0.3, 0.4, 0.9)
+U = [Worker(0.6, 0.5, 0.8, 0.8),
+	Worker(0.8, 0.6, 1, 0.6),
+	Worker(0.3, 0.6, 0.4, 0.9),
+	Worker(0.5, 0.5, 0.7, 0.9),
+	Worker(0.3, 0.4, 0.6, 0.9)
 	]
+
 '''
 U = []
 for i in range(100):
 	U.append( Worker(d[i]*x_s1[i], d[i]*x_s2[i], d[i]*y[i], p[i]) )
-	'''
+'''
