@@ -17,13 +17,16 @@ if __name__ == '__main__':
 	TaskIn = InitTaskIndex([], [])
 	cm = CrowdMaint(Arv, TaskIn)
 
-	for i in range(15):
+	for i in range(40):
 		print "unit %d start" % i
+		cm.ahead()
+		'''
 		cm.arrivalTW()
 		if cm.Arrival.flag > 0:
 			cm.updateTW() # タスク・ワーカーの情報の変更
 			cm.optimalOn() # インデックスアップデート
 		cm.TIME += 1 #
+		'''
 		print "^^^^^^^"
 		print cm.TaskIn.TAlist
 		print cm.TaskIn.Workers
@@ -47,8 +50,7 @@ if __name__ == '__main__':
 		for j in range (len(cm.TaskIn.TAlist)):
 			print "v", cm.TaskIn.TAlist[j].v_t
 		for k in range (len(cm.TaskIn.TAlist)):
-			print "u", cm.TaskIn.TAlist[k].u_t
-	
+			print "u", cm.TaskIn.TAlist[k].u_t	
 	print cm.TaskIn.finWorkers
 	print cm.TaskIn.finTasks
 	print cm.TaskIn.V

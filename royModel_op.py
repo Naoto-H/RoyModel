@@ -81,11 +81,11 @@ def AssignWorker(i, TI, OptimalTI):
 	for j in range( 2 ** len(TI.TAlist[0].u_t) ): #2^nのパターン数
 
 		if see_Xh(TI, Xh, i-1) == False:
-
+			break
 		TI.TAlist[i].u_t = binCon(j, len(TI.TAlist[0].u_t))
 		
 		if (i > 0) and (cul_wage(TI.TAlist[i-1].u_t, TI.Workers) > TI.TAlist[i-1].task.Wage):
-
+			break
 		TI.TAlist[i].v_t = value(TI.TAlist[i].task, TI.TAlist[i].u_t, TI.Workers)
 		
 		if i == ( len(TI.TAlist)-1 ): #最後の列まで行った場合
@@ -141,7 +141,7 @@ def see_Xh(TI, h, k): #k行目まででXhをチェック
 		return True
 
 	for j in range(len(TI.Workers)):
-		flag = 0
+		flag = TI.Workers[j].X
 		for i in range(k):
 			flag += int(TI.TAlist[i].u_t[j])
 		if flag > h:
@@ -150,7 +150,7 @@ def see_Xh(TI, h, k): #k行目まででXhをチェック
 
 def checkXh(TI, h):
 	for j in range(len(TI.Workers)):
-		flag = 0
+		flag = TI.Workers[j].X
 		for i in range(len(TI.TAlist)):
 			flag += int(TI.TAlist[i].u_t[j])
 		if flag > h:

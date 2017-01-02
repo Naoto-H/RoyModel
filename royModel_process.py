@@ -59,13 +59,15 @@ class CrowdMaint(object):
 			self.TaskIn.TAlist = TAlist
 
 	def optimalOn(self):
-		if self.TaskIn.TAlist != []:
+		if self.TaskIn.Tasks != [] and self.TaskIn.Workers != []:
 			
 			#TI = InitTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers)
 			print "==="
 			print self.TaskIn.TAlist
 			print self.TaskIn.Workers
 			print self.TaskIn.Tasks
+			for worker in self.TaskIn.Workers:
+				print worker.X
 			if self.TaskIn.TAlist != []:
 				for i in range (len(self.TaskIn.TAlist)):
 					print "v", self.TaskIn.TAlist[i].v_t
@@ -86,6 +88,8 @@ class CrowdMaint(object):
 			print self.TaskIn.TAlist
 			print self.TaskIn.Workers
 			print self.TaskIn.Tasks
+			for worker in self.TaskIn.Workers:
+				print worker.X
 			if self.TaskIn.TAlist != []:
 				for i in range (len(self.TaskIn.TAlist)):
 					print "v", self.TaskIn.TAlist[i].v_t
@@ -107,29 +111,64 @@ class CrowdMaint(object):
 
 def assignAndUpdateTI(TaskIn):
 	dt_count = 0 #今回消すタスク
-	dw_count = 0 #今回卒業するワーカー
 	
+	print "llllllllllllllllllll"
+	print TaskIn.TAlist
+	print TaskIn.Workers
+	print TaskIn.Tasks
+	for worker in TaskIn.Workers:
+		print worker.X
+	if TaskIn.TAlist != []:
+		for i in range (len(TaskIn.TAlist)):
+			print "v", TaskIn.TAlist[i].v_t
+		for i in range (len(TaskIn.TAlist)):
+			print "u", TaskIn.TAlist[i].u_t
+	print TaskIn.finWorkers
+	print TaskIn.finTasks
+	print TaskIn.V
+	print "llllllllllllllllllll"
+
+
 	for i in range(len(TaskIn.TAlist)): #成功したタスクに印をつける
 		if TaskIn.TAlist[i-dt_count].v_t != 0: #v_tが0でない、つまり成功したタスク
 			
 			for j in range(len(TaskIn.Workers)):
-				TaskIn.Workers[j-dw_count].X += int(TaskIn.TAlist[i-dt_count].u_t[j-dw_count]) #Xに格納 #Xに格納して大丈夫か？
-
-				if TaskIn.Workers[j-dw_count].X == Xh:
-					del TaskIn.Workers[j-dw_count] #ワーカー消去
-					for k in range(len(TaskIn.TAlist)):
-						del TaskIn.TAlist[k].u_t[j-dw_count]
-					dw_count += 1
-
-				elif TaskIn.Workers[j-dw_count].X > Xh:
-					assert("Over Capacity(Xh) of a Worker")
+				TaskIn.Workers[j].X += int(TaskIn.TAlist[i-dt_count].u_t[j]) #Xに格納 #Xに格納して大丈夫か？
 
 			del TaskIn.TAlist[i-dt_count] #タスク消去
 			del TaskIn.Tasks[i-dt_count]
 			dt_count += 1
+			TaskIn.finTasks += 1
 
-	TaskIn.finTasks += dt_count
-	TaskIn.finWorkers += dw_count
+
+	print "BBBBBBBBBBBBBBBB"
+	print TaskIn.TAlist
+	print TaskIn.Workers
+	print TaskIn.Tasks
+	for worker in TaskIn.Workers:
+		print worker.X
+	if TaskIn.TAlist != []:
+		for i in range (len(TaskIn.TAlist)):
+			print "v", TaskIn.TAlist[i].v_t
+		for i in range (len(TaskIn.TAlist)):
+			print "u", TaskIn.TAlist[i].u_t
+	print TaskIn.finWorkers
+	print TaskIn.finTasks
+	print TaskIn.V
+	print "BBBBBBBBBBBBBBBB"
+
+	dw_count = 0
+	for j in range(len(TaskIn.Workers)):
+		if TaskIn.Workers[j-dw_count].X == Xh:
+			del TaskIn.Workers[j-dw_count] #ワーカー消去
+			for TA in TaskIn.TAlist:
+				del TA.u_t[j-dw_count]
+			dw_count += 1 #今回卒業するワーカー
+			TaskIn.finWorkers += 1
+
+		elif TaskIn.Workers[j-dw_count].X > Xh:
+			assert("Over Capacity(Xh) of a Worker")
+			
 	return TaskIn
 
 def addTask(Arrival, TaskIn):
@@ -149,7 +188,10 @@ def addWorker(Arrival, TaskIn):
 def nextP_worker(Arrival):
 	if isinstance(Arrival.arWorker, list) != True:
 		Arrival.arWorker = [Arrival.arWorker]
-	Arrival.arWorker.append(random.choice(U)) #ワーカー加える
+	u = random.choice(U)
+	u.X = 0
+	Arrival.arWorker.append(u) #ワーカー加える
+#	Arrival.arWorker.append(random.choice(U)) #ワーカー加える
 	next_p = poisson(lam = IntervalWorker) #次のワーカーの時間
 	if next_p == 0:
 		next_p = nextP_worker(Arrival)
