@@ -3,12 +3,13 @@
 
 import numpy as np
 from royModel_data import *
-from royModel_op import *
-from numpy.random import *
+from royModel_optimal import *
 from numpy import *
 
-IntervalTask = 2
-IntervalWorker = 4
+#ポアソン分布の定数
+
+IntervalTask = 8
+IntervalWorker = 5
 
 class Arrival(object):
 	arTaskTime = 0
@@ -32,12 +33,12 @@ class CrowdMaint(object):
 		self.Arrival.flag = 0
 		if self.Arrival.arTaskTime == self.TIME:
 			self.Arrival.arTaskTime += nextP_task(self.Arrival)
-			print "- task arrival "
+			#print "- task arrival %d -" % len(self.Arrival.arTask)
 			self.Arrival.flag += 1 #フラグを立てる
 
 		if self.Arrival.arWorkerTime == self.TIME:
 			self.Arrival.arWorkerTime += nextP_worker(self.Arrival)
-			print "= worker arrival ="
+			#print "= worker arrival %d =" % len(self.Arrival.arWorker)
 			self.Arrival.flag += 2	
 
 	def updateTW(self):
@@ -58,76 +59,56 @@ class CrowdMaint(object):
 				TAlist.append(TaskAssign(task, ['0'] * len(self.TaskIn.Workers) ))
 			self.TaskIn.TAlist = TAlist
 
-	def optimalOn(self):
+	def optimal(self):
 		if self.TaskIn.Tasks != [] and self.TaskIn.Workers != []:
-			
-			#TI = InitTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers)
-			print "==="
-			print self.TaskIn.TAlist
-			print self.TaskIn.Workers
-			print self.TaskIn.Tasks
-			for worker in self.TaskIn.Workers:
-				print worker.X
-			if self.TaskIn.TAlist != []:
-				for i in range (len(self.TaskIn.TAlist)):
-					print "v", self.TaskIn.TAlist[i].v_t
-				for i in range (len(self.TaskIn.TAlist)):
-					print "u", self.TaskIn.TAlist[i].u_t
-			print self.TaskIn.finWorkers
-			print self.TaskIn.finTasks
-			print self.TaskIn.V
-			print "==="
 
-			TI = InitTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers)
+			#print "==="
+			#printTI(self.TaskIn)
+			#print "==="
+
+			TI = initTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers)
 			TI.V = self.TaskIn.V
 			TI.finWorkers = self.TaskIn.finWorkers
 			TI.finTasks = self.TaskIn.finTasks
-			self.TaskIn = AssignWorker(0, self.TaskIn, TI)
+			TI.failTasks = self.TaskIn.failTasks
+			self.TaskIn = assignWorker(0, self.TaskIn, TI)
 			
-			print "++++"
-			print self.TaskIn.TAlist
-			print self.TaskIn.Workers
-			print self.TaskIn.Tasks
-			for worker in self.TaskIn.Workers:
-				print worker.X
-			if self.TaskIn.TAlist != []:
-				for i in range (len(self.TaskIn.TAlist)):
-					print "v", self.TaskIn.TAlist[i].v_t
-				for i in range (len(self.TaskIn.TAlist)):
-					print "u", self.TaskIn.TAlist[i].u_t
-			print self.TaskIn.finWorkers
-			print self.TaskIn.finTasks
-			print self.TaskIn.V
-			print "++++"
+			#print "++++"
+			#printTI(self.TaskIn)
+			#print "++++"
 
 			assignAndUpdateTI(self.TaskIn) # Task、Worker振り分け
-			
+	
+	def taskLifeTime(self): #lifetimeを減らし、0になったものを消す
+		dt_count = 0
+
+		if self.TaskIn.TAlist != []:
+			for i in range(len(self.TaskIn.TAlist)):
+				self.TaskIn.Tasks[i-dt_count].lifetime += -1 #self.TaskIn.TAlist[i-dt_count].task.lifetimeも同期して減る
+
+				if self.TaskIn.TAlist[i-dt_count].task.lifetime < 0 or self.TaskIn.Tasks[i-dt_count].lifetime < 0:
+					assert("Some tasks are overdue")
+				if self.TaskIn.TAlist[i-dt_count].task.lifetime == 0 and self.TaskIn.Tasks[i-dt_count].lifetime == 0:
+					del self.TaskIn.TAlist[i-dt_count]
+					del self.TaskIn.Tasks[i-dt_count]
+					dt_count += 1
+					self.TaskIn.failTasks += 1
+		
 	def ahead(self): # 1ユニットの間にすること
 		self.arrivalTW()
 		if self.Arrival.flag > 0:
 			self.updateTW() # タスク・ワーカーの情報の変更
-			self.optimalOn() # インデックスアップデート	 
+			self.optimal() # インデックスアップデート
+			#printTI(self.TaskIn)	 
+			self.taskLifeTime()
 		self.TIME += 1 #　1時間1ユニットとすると？
 
 def assignAndUpdateTI(TaskIn):
 	dt_count = 0 #今回消すタスク
 	
-	print "llllllllllllllllllll"
-	print TaskIn.TAlist
-	print TaskIn.Workers
-	print TaskIn.Tasks
-	for worker in TaskIn.Workers:
-		print worker.X
-	if TaskIn.TAlist != []:
-		for i in range (len(TaskIn.TAlist)):
-			print "v", TaskIn.TAlist[i].v_t
-		for i in range (len(TaskIn.TAlist)):
-			print "u", TaskIn.TAlist[i].u_t
-	print TaskIn.finWorkers
-	print TaskIn.finTasks
-	print TaskIn.V
-	print "llllllllllllllllllll"
-
+	#print "@@@@@@@@@"
+	#printTI(TaskIn)
+	#print "@@@@@@@@@"
 
 	for i in range(len(TaskIn.TAlist)): #成功したタスクに印をつける
 		if TaskIn.TAlist[i-dt_count].v_t != 0: #v_tが0でない、つまり成功したタスク
@@ -140,22 +121,9 @@ def assignAndUpdateTI(TaskIn):
 			dt_count += 1
 			TaskIn.finTasks += 1
 
-
-	print "BBBBBBBBBBBBBBBB"
-	print TaskIn.TAlist
-	print TaskIn.Workers
-	print TaskIn.Tasks
-	for worker in TaskIn.Workers:
-		print worker.X
-	if TaskIn.TAlist != []:
-		for i in range (len(TaskIn.TAlist)):
-			print "v", TaskIn.TAlist[i].v_t
-		for i in range (len(TaskIn.TAlist)):
-			print "u", TaskIn.TAlist[i].u_t
-	print TaskIn.finWorkers
-	print TaskIn.finTasks
-	print TaskIn.V
-	print "BBBBBBBBBBBBBBBB"
+	#print "::::::::::" 
+	#printTI(TaskIn)
+	#print "::::::::::"
 
 	dw_count = 0
 	for j in range(len(TaskIn.Workers)):
@@ -191,7 +159,6 @@ def nextP_worker(Arrival):
 	u = random.choice(U)
 	u.X = 0
 	Arrival.arWorker.append(u) #ワーカー加える
-#	Arrival.arWorker.append(random.choice(U)) #ワーカー加える
 	next_p = poisson(lam = IntervalWorker) #次のワーカーの時間
 	if next_p == 0:
 		next_p = nextP_worker(Arrival)
@@ -200,7 +167,9 @@ def nextP_worker(Arrival):
 def nextP_task(Arrival):
 	if isinstance(Arrival.arTask, list) != True:
 		Arrival.arTask = [Arrival.arTask]
-	Arrival.arTask.append(random.choice(T)) #ワーカー加える
+	t = random.choice(T)
+	t.lifetime = LIFELIMIT
+	Arrival.arTask.append(t) #ワーカー加える
 	next_p = poisson(lam = IntervalTask) #次のワーカーの時間
 	if next_p == 0:
 		next_p = nextP_task(Arrival)
