@@ -68,6 +68,7 @@ class CrowdMaint(object):
 
 			TI = initTaskIndex(self.TaskIn.Tasks, self.TaskIn.Workers)
 			TI.V = self.TaskIn.V
+			TI.Wage = self.TaskIn.Wage
 			TI.finWorkers = self.TaskIn.finWorkers
 			TI.finTasks = self.TaskIn.finTasks
 			TI.failTasks = self.TaskIn.failTasks

@@ -16,7 +16,6 @@ class Worker(object):
 		self.w_tr = w_tr
 
 class Task(object):
-	Tloc = "" 
 	lifetime = 0
 
 	def __init__(self, Q_s1, Q_s2, Wage):
@@ -26,6 +25,7 @@ class Task(object):
 
 class TaskAssign(object):
 	v_t = 0
+	w_t = 0
 	def __init__(self, task, u_t):
 		self.task = task
 		self.u_t = u_t
@@ -37,6 +37,7 @@ class TaskIndex(object):
 	finWorkers = 0
 	finTasks = 0
 	failTasks = 0
+	Wage = 0
 
 	def __init__(self, TAlist):
 		self.TAlist = TAlist #TaskAssingクラスのリスト
@@ -58,6 +59,11 @@ class TaskIndex(object):
 			self.V += TA.v_t
 		return self.V
 
+	def update_sumWage(self):
+		for TA in self.TAlist:
+			self.Wage += TA.w_t
+		return self.Wage
+
 def initTaskIndex(Tasks, Workers):
 	TAlist = [] #新規の場合
 	for task in Tasks:
@@ -74,10 +80,12 @@ def copyTI(TI1, TI2): #T1をT2にコピー
 	TI2.finWorkers = TI1.finWorkers
 	TI2.finTasks = TI1.finTasks
 	TI2.failTasks = TI1.failTasks
+	TI2.Wage = TI1.Wage
 
 	for i in range(len(TI1.TAlist)):
 		TI2.TAlist[i].task = TI1.TAlist[i].task
 		TI2.TAlist[i].v_t = TI1.TAlist[i].v_t
+		TI2.TAlist[i].w_t = TI1.TAlist[i].w_t
 		TI2.TAlist[i].u_t = TI1.TAlist[i].u_t
 
 def assignWorker(i, TI, OptimalTI):
@@ -90,12 +98,14 @@ def assignWorker(i, TI, OptimalTI):
 		if (i > 0) and (cul_wage(TI.TAlist[i-1].u_t, TI.Workers) > TI.TAlist[i-1].task.Wage):
 			break
 		TI.TAlist[i].v_t = value(TI.TAlist[i].task, TI.TAlist[i].u_t, TI.Workers)
+		TI.TAlist[i].w_t = cul_wage(TI.TAlist[i].u_t, TI.Workers)
 		
 		if i == ( len(TI.TAlist)-1 ): #最後の列まで行った場合
 			if checkXh(TI, Xh) == True:				
 				if TI.cul_V() > OptimalTI.cul_V() : #ここではVに足されない
 					copyTI(TI, OptimalTI)
 					OptimalTI.update_sumV() #ここでVに足される
+					OptimalTI.update_sumWage()
 
 		else:
 			OptimalTI = assignWorker(i+1, TI, OptimalTI)
@@ -180,3 +190,4 @@ def printTI(TI):
 	print TI.finTasks
 	print TI.failTasks
 	print TI.V
+	print TI.Wage

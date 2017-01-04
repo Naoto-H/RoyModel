@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import random
 import time
 
-PERIOD = 1440 #全体の時間
+PERIOD = 480 #全体の時間
 CUL_UNI = 1 #出力したい期間単位
 
 seed(7) 
@@ -25,12 +25,13 @@ if __name__ == '__main__':
 	
 	FIN = [0]
 	V = [0]
-
+	Wage = []
+	print "pattern is %d" % PATTERN
 	for i in range(PERIOD):
 		cm.ahead()
 		if i%CUL_UNI == 0 and i > 0:
 			elapsed_time = time.time() - start
-			print "%d時間後" % i, cm.TaskIn.finTasks, cm.TaskIn.V, ("elapsed_time:{0}".format(elapsed_time)) + "[sec]"
+			print "%d時間後" % i, cm.TaskIn.finTasks, cm.TaskIn.V, cm.TaskIn.Wage, ("elapsed_time:{0}".format(elapsed_time)) + "[sec]"
 			FIN.append(cm.TaskIn.finTasks)
 			V.append(cm.TaskIn.V)
 			#FIN.append(cm.TaskIn.finTasks - FIN[i/CUL_UNI-1])
@@ -40,7 +41,7 @@ if __name__ == '__main__':
 		#print "^^^ unit %d ^^^" % i
 		#printTI(cm.TaskIn)
 		#print "^^^ unit %d ^^^" % i
-		
+	
 	printTI(cm.TaskIn)
 	
 	'''
