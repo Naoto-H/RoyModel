@@ -23,15 +23,17 @@ if __name__ == '__main__':
 	TaskIn = initTaskIndex([], [])
 	cm = CrowdMaint(Arv, TaskIn)
 	
-	FIN = [0]
-	V = [0]
+	FIN = []
+	V = []
 	Wage = []
+	Q = []
+
 	print "pattern is %d" % PATTERN
-	for i in range(PERIOD):
+	for i in range(PERIOD+1):
 		cm.ahead()
 		if i%CUL_UNI == 0 and i > 0:
 			elapsed_time = time.time() - start
-			print "%d時間後" % i, cm.TaskIn.finTasks, cm.TaskIn.V, cm.TaskIn.Wage, ("elapsed_time:{0}".format(elapsed_time)) + "[sec]"
+			print "%d時間後" % i, cm.TaskIn.finTasks, cm.TaskIn.V, cm.TaskIn.Wage, cm.TaskIn.Quality, ("elapsed_time:{0}".format(elapsed_time)) + "[sec]"
 			FIN.append(cm.TaskIn.finTasks)
 			V.append(cm.TaskIn.V)
 			#FIN.append(cm.TaskIn.finTasks - FIN[i/CUL_UNI-1])

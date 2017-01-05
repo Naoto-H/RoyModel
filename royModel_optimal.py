@@ -26,6 +26,7 @@ class Task(object):
 class TaskAssign(object):
 	v_t = 0
 	w_t = 0
+	q_t = 0
 	def __init__(self, task, u_t):
 		self.task = task
 		self.u_t = u_t
@@ -38,6 +39,7 @@ class TaskIndex(object):
 	finTasks = 0
 	failTasks = 0
 	Wage = 0
+	Quality = 0
 
 	def __init__(self, TAlist):
 		self.TAlist = TAlist #TaskAssingクラスのリスト
@@ -64,6 +66,11 @@ class TaskIndex(object):
 			self.Wage += TA.w_t
 		return self.Wage
 
+	def update_sumQuality(self):
+		for TA in self.TAlist:
+			self.Quality += TA.q_t
+		return self.Quality
+
 def initTaskIndex(Tasks, Workers):
 	TAlist = [] #新規の場合
 	for task in Tasks:
@@ -81,12 +88,14 @@ def copyTI(TI1, TI2): #T1をT2にコピー
 	TI2.finTasks = TI1.finTasks
 	TI2.failTasks = TI1.failTasks
 	TI2.Wage = TI1.Wage
+	TI2.Quality = TI1.Quality
 
 	for i in range(len(TI1.TAlist)):
 		TI2.TAlist[i].task = TI1.TAlist[i].task
 		TI2.TAlist[i].v_t = TI1.TAlist[i].v_t
 		TI2.TAlist[i].w_t = TI1.TAlist[i].w_t
 		TI2.TAlist[i].u_t = TI1.TAlist[i].u_t
+		TI2.TAlist[i].q_t = TI1.TAlist[i].q_t
 
 def assignWorker(i, TI, OptimalTI):
 	for j in range( 2 ** len(TI.TAlist[0].u_t) ): #2^nのパターン数
@@ -99,6 +108,7 @@ def assignWorker(i, TI, OptimalTI):
 			break
 		TI.TAlist[i].v_t = value(TI.TAlist[i].task, TI.TAlist[i].u_t, TI.Workers)
 		TI.TAlist[i].w_t = cul_wage(TI.TAlist[i].u_t, TI.Workers)
+		TI.TAlist[i].q_t = cul_quality(TI.TAlist[i].u_t, TI.Workers)
 		
 		if i == ( len(TI.TAlist)-1 ): #最後の列まで行った場合
 			if checkXh(TI, Xh) == True:				
@@ -106,6 +116,7 @@ def assignWorker(i, TI, OptimalTI):
 					copyTI(TI, OptimalTI)
 					OptimalTI.update_sumV() #ここでVに足される
 					OptimalTI.update_sumWage()
+					OptimalTI.update_sumQuality()
 
 		else:
 			OptimalTI = assignWorker(i+1, TI, OptimalTI)
@@ -168,6 +179,15 @@ def cul_wage(u_t, Workers):
 			wage_t += int(u_t[i]) * Workers[i].p * Workers[i].wage
 	return wage_t
 
+def cul_quality(u_t, Workers):
+	q_t = 0
+	if u_t == [] or Workers == []:
+		q_t = 0
+	else:
+		for i in range(len(u_t)):
+			q_t += int(u_t[i]) * Workers[i].p * Workers[i].q_s1 + int(u_t[i]) * Workers[i].p * Workers[i].q_s2
+	return q_t
+
 def binCon(i, l): #二進法に変換
 	u_t = str(bin(i))[2:]
 	if len(u_t) != l:
@@ -191,3 +211,4 @@ def printTI(TI):
 	print TI.failTasks
 	print TI.V
 	print TI.Wage
+	print TI.Quality

@@ -8,7 +8,7 @@ from royModel_optimal import *
 seed(7)
 #794
 
-PATTERN = 0
+PATTERN = 2
 # 0 日本都市
 # 1 日本農村
 # 2 インド都市
