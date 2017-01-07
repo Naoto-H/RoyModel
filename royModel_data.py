@@ -5,10 +5,17 @@ from numpy import *
 from numpy.random import *
 from royModel_optimal import *
 
-seed(7)
-#794
 
-PATTERN = 2
+SEED = 7
+#7
+#17
+#37
+#47
+#57
+#97!!(110)
+#157(94)
+seed(SEED)
+PATTERN = 1
 # 0 日本都市
 # 1 日本農村
 # 2 インド都市
@@ -87,11 +94,11 @@ for i in range(WORKER):
 		wtr.append( d[i] * p_norm(3, 1.5) * w)
 	if PATTERN == 2: #インド都市
 		d.append(p_normOne(0.4, 0.25)) 
-		y.append(p_norm(2.5, 0.625)) #賃金の倍率
+		y.append(p_norm(2.5, 0.63)) #賃金の倍率
 		wtr.append(p_norm(0.6, 0.2) * w)
 	if PATTERN == 3: #インド農村
 		d.append(p_normOne(0.3, 0.2)) 
-		y.append(p_norm(2.5, 0.625)) #賃金の倍率
+		y.append(p_norm(2.5, 0.63)) #賃金の倍率
 		wtr.append( d[i] * p_norm(3, 1.5) * w)
 	
 	x_s1.append(p_norm(0.7, 0.15)) #スキル1の倍率

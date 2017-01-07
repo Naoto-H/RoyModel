@@ -3,7 +3,8 @@
 
 from numpy import *
 
-C1 = C2 = 0.5
+C1 = 0
+C2 = 1
 Xh = 2
 
 class Worker(object):
@@ -163,7 +164,8 @@ def value(t, u_t, Workers): #v_t関数定義
 			q_t_s2 += int(u_t[i]) * Workers[i].p * Workers[i].q_s2 
 			wage_t += int(u_t[i]) * Workers[i].p * ( Workers[i].wage + Workers[i].w_tr)
 
-	v_t = C1 * (q_t_s1 + q_t_s2) + C2 * (1 - wage_t/t.Wage)
+#	v_t = C1 * (q_t_s1 + q_t_s2) + C2 * (1 - wage_t/t.Wage)
+	v_t = C2 * (1 - wage_t/t.Wage)
 
 	if q_t_s1 >= t.Q_s1 and q_t_s2 >= t.Q_s2 and wage_t <= t.Wage: 
 		return v_t

@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 import random
 import time
 
-PERIOD = 480 #全体の時間
+PERIOD = 1000 #全体の時間
 CUL_UNI = 1 #出力したい期間単位
 
-seed(7) 
+seed(SEED) 
 
 if __name__ == '__main__':
 	start = time.time()
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 	Wage = []
 	Q = []
 
-	print "pattern is %d" % PATTERN
+	print "pattern is %d, seed is %d" % (PATTERN, SEED)
 	for i in range(PERIOD+1):
 		cm.ahead()
 		if i%CUL_UNI == 0 and i > 0:
@@ -38,12 +38,12 @@ if __name__ == '__main__':
 			V.append(cm.TaskIn.V)
 			#FIN.append(cm.TaskIn.finTasks - FIN[i/CUL_UNI-1])
 			#V.append(cm.TaskIn.V - V[i / CUL_UNI -1])
-
+		'''
 		#	print cm.wage
-		#print "^^^ unit %d ^^^" % i
-		#printTI(cm.TaskIn)
-		#print "^^^ unit %d ^^^" % i
-	
+		print "^^^ unit %d ^^^" % i
+		printTI(cm.TaskIn)
+		print "^^^ unit %d ^^^" % i
+		'''
 	printTI(cm.TaskIn)
 	
 	'''
@@ -66,7 +66,7 @@ if __name__ == '__main__':
 	#rng = range(len(FIN))	
 	#plt.plot(rng, FIN, label=u"Fraction of Successful tasks")
 	#plt.plot(rng, V, label=u"Objective function")
-
+	
 	#plt.hist(x_s1 ,label=u"x_s1")
 	#plt.hist(W,label=u"x_s2")
 	#plt.hist(d_i,label=u"x_s2")
